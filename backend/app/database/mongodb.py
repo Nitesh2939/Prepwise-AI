@@ -5,3 +5,4 @@ client = MongoClient("mongodb://localhost:27017")
 db = client["prepwise"]
 
 users_collection = db["users"]
+interviews_collection = db["interviews"]

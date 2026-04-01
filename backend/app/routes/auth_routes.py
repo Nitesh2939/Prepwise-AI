@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from app.models.user_schema import UserSignup, UserLogin
+from app.schemas.auth_schema import LoginRequest
 from app.database.mongodb import users_collection
 from passlib.hash import bcrypt
 
