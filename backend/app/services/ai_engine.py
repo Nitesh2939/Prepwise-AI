@@ -190,3 +190,61 @@ Example: ["Reduce filler words like 'um'", "Use more concrete examples", "Speak 
         "pause_frequency": pause_frequency,
         "communication_tips": tips
     }
+
+
+def generate_questions_from_resume(resume_text: str) -> list:
+    """
+    Generates 5-7 interview questions based on resume content.
+    Uses Gemini API to analyze skills, projects, and experience.
+    Returns a list of question strings.
+    """
+    if not resume_text or len(resume_text.strip()) < 10:
+        raise ValueError("Resume text is empty or too short")
+
+    prompt = f"""
+Based on this resume, generate exactly 5-7 technical interview questions.
+
+Resume:
+{resume_text}
+
+Focus on:
+- Skills mentioned
+- Projects and achievements
+- Technologies and tools
+- Experience and responsibilities
+
+Return ONLY a valid JSON array of strings (question list). 
+Example format: ["Question 1?", "Question 2?", "Question 3?"]
+
+Do NOT include any markdown, code fences, or explanations. Just the JSON array.
+"""
+
+    try:
+        response = model.generate_content(prompt)
+        text = response.text.strip()
+        
+        # Remove markdown code fences if present
+        text = re.sub(r"```json|```", "", text).strip()
+        
+        # Parse JSON
+        questions = json.loads(text)
+        
+        # Validate it's a list of strings
+        if not isinstance(questions, list):
+            raise ValueError("Response is not a list")
+        
+        if len(questions) == 0:
+            raise ValueError("No questions generated")
+        
+        # Ensure all items are strings
+        questions = [str(q).strip() for q in questions if q]
+        
+        if not questions:
+            raise ValueError("Questions list is empty after processing")
+        
+        return questions
+        
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Failed to parse AI response as JSON: {str(e)}")
+    except Exception as e:
+        raise ValueError(f"Error generating questions from resume: {str(e)}")

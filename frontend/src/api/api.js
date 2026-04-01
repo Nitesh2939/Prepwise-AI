@@ -44,3 +44,32 @@ export const interviewAPI = {
   submit: (data) =>
     apiFetch("/interviews", { method: "POST", body: JSON.stringify(data) }),
 };
+
+// ── Resume ────────────────────────────────────────────────────────────────────
+export const resumeAPI = {
+  uploadResume: async (file) => {
+    const token = localStorage.getItem("token");
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await fetch(`${BASE_URL}/resume/upload-resume`, {
+      method: "POST",
+      body: formData,
+      ...(token && { headers: { Authorization: `Bearer ${token}` } }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: "Upload failed" }));
+      throw new Error(err.detail || `HTTP ${res.status}`);
+    }
+
+    const data = await res.json();
+    
+    // Validate response contains questions array
+    if (!data.questions || !Array.isArray(data.questions)) {
+      throw new Error("Invalid response format from server");
+    }
+
+    return data.questions;
+  },
+};
