@@ -1,4 +1,5 @@
 import React from "react"
+import HowItWorks from "../components/HowItWorks";
 
 export default function LandingPage({
   isLoggedIn,
@@ -153,6 +154,8 @@ export default function LandingPage({
         </div>
 
       </div>
+      {/* ADD HERE (outside main div but inside fragment) */}
+    <HowItWorks />
     </>
   )
 }

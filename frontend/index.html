@@ -348,7 +348,7 @@
 
         _setLoading('login-btn', true);
 
-        fetch('http://127.0.0.1:8000/login', {
+        fetch('http://127.0.0.1:8000/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: email, password: pw })
@@ -405,7 +405,7 @@
 
         _setLoading('reg-btn', true);
 
-        fetch('http://127.0.0.1:8000/signup', {
+        fetch('http://127.0.0.1:8000/auth/signup', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name: name, email: email, password: pw })

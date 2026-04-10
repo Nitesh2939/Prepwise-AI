@@ -112,7 +112,12 @@ export default function App() {
   const [userName, setUserName]     = useState("");
 
   // ── Pages & interview ────────────────────────────────────────
-  const [page, setPage]               = useState("landing");
+const [page, setPage] = useState(() => {
+  return localStorage.getItem("page") || "landing";
+});
+useEffect(() => {
+  localStorage.setItem("page", page);
+}, [page]);
   const [selectedRole, setSelectedRole] = useState(null);
   const [questionIdx, setQuestionIdx]  = useState(0);
   const [answer, setAnswer]            = useState("");
@@ -133,6 +138,28 @@ export default function App() {
   const questions = roleData?.questions || [];
   const totalQ    = questions.length;
   const currentQ  = questions?.[questionIdx] || "";
+
+  //--SPA-----------------------
+  useEffect(() => {
+  window.history.pushState({ page }, "", window.location.href);
+}, [page]);
+  useEffect(() => {
+  const handleBack = () => {
+    if (page === "dashboard" || page === "roles") {
+      setPage("landing");
+    } else if (page === "interview") {
+      setPage("roles");
+    } else if (page === "report") {
+      setPage("landing");
+    } else {
+      setPage("landing");
+    }
+  };
+
+  window.addEventListener("popstate", handleBack);
+
+  return () => window.removeEventListener("popstate", handleBack);
+}, [page]);
 
   // ── Read auth from localStorage on mount ────────────────────
   useEffect(() => {
